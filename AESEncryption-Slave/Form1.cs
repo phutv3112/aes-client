@@ -23,7 +23,6 @@ namespace AESEncryptionSlave
         {
             InitializeComponent();
             textBoxDcryptPassword.Text = Encoding.UTF8.GetString(ReceiveKey());
-            textBoxEncrypted.Text = Encoding.UTF8.GetString(ReceiveEncrypted());
         }
 
         private void buttonExit_Click(object sender, EventArgs e)
@@ -32,17 +31,7 @@ namespace AESEncryptionSlave
         }
         static byte[] ReceiveKey()
         {
-            //byte[] key = new byte[32]; // Kích thước của khóa AES là 32 byte
-            //using (Socket receiver = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp))
-            //{
-            //    receiver.Bind(new IPEndPoint(IPAddress.Loopback, 11000));
-            //    receiver.Listen(1);
-            //    using (Socket handler = receiver.Accept())
-            //    {
-            //        handler.Receive(key);
-            //    }
-            //}
-            //return key;
+           
             byte[] key = new byte[32]; // Kích thước của khóa AES là 32 byte
             IPAddress ipAddress = IPAddress.Parse("127.0.0.1"); // Địa chỉ IP của máy gửi
             using (Socket receiver = new Socket(ipAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp))
@@ -71,13 +60,41 @@ namespace AESEncryptionSlave
             }
             return key;
         }
+        static void DecryptReceivedFile(string filePath, string key)
+        {
+            IPAddress ipAddress = IPAddress.Parse("127.0.0.1");
+            using (Socket receiver = new Socket(ipAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp))
+            {
+                receiver.Bind(new IPEndPoint(IPAddress.Loopback, 11001));
+                receiver.Listen(1);
+                using (Socket handler = receiver.Accept())
+                {
+                    // Xóa nội dung của file và ghi dữ liệu mới vào file
+                    using (FileStream fsEncrypted = new FileStream(filePath, FileMode.OpenOrCreate))
+                    {
+                        fsEncrypted.SetLength(0); // Xóa nội dung của file
+                        byte[] buffer = new byte[1024];
+                        int bytesRead;
+                        while ((bytesRead = handler.Receive(buffer)) > 0)
+                        {
+                            fsEncrypted.Write(buffer, 0, bytesRead);
+                        }
+                    }
+                }
+            }
+
+            // Xóa nội dung của file giải mã và ghi dữ liệu mới vào file
+            using (FileStream fsEncrypted = new FileStream(filePath, FileMode.Open))
+            
+            AES.Decrypt(filePath, key);
+        }
         private void buttonEncrypt_Click(object sender, EventArgs e)
         {
             try
             {
-                var data = Encrypt(textBoxInput.Text, textBoxEncryptPassword.Text);
-                textBoxEncryptedOutput.Text = data.StringEncryptOrDecrypt;
-                textTimeEncrypt.Text = data.DecrypEncryptTime.ToString("0.#############");
+                //var data = Encrypt(textBoxInput.Text, textBoxEncryptPassword.Text);
+                //textBoxEncryptedOutput.Text = data.StringEncryptOrDecrypt;
+                //textTimeEncrypt.Text = data.DecrypEncryptTime.ToString("0.#############");
             }
             catch (Exception ex)
             {
@@ -89,9 +106,10 @@ namespace AESEncryptionSlave
         {
             try
             {
-                var data = Decrypt(textBoxEncrypted.Text, textBoxDcryptPassword.Text);
-                textBoxDecryptOutput.Text = data.StringEncryptOrDecrypt;
-                textTimeDecrypt.Text = data.DecrypEncryptTime.ToString("0.#############");
+                //var data = Decrypt(textBoxEncrypted.Text, textBoxDcryptPassword.Text);
+                //textBoxDecryptOutput.Text = data.StringEncryptOrDecrypt;
+                //textTimeDecrypt.Text = data.DecrypEncryptTime.ToString("0.#############");
+                DecryptReceivedFile(textBoxEncrypted.Text, textBoxDcryptPassword.Text);
             }
             catch (Exception ex)
             {
@@ -124,27 +142,27 @@ namespace AESEncryptionSlave
             buttonDecrypt.Enabled = textBoxEncrypted.Text.Length > 0;
         }
 
-        private DataEncryptionProvider Encrypt(string plainText, string Password)
-        {
-            Stopwatch stopwatch = new Stopwatch();
+        //private DataEncryptionProvider Encrypt(string plainText, string Password)
+        //{
+        //    Stopwatch stopwatch = new Stopwatch();
 
-            stopwatch.Start();
-            string encryptString = Convert.ToBase64String(AES.Encrypt(plainText, Password));
-            stopwatch.Stop();
-            double encryptionTime = stopwatch.Elapsed.TotalSeconds;
-            return new DataEncryptionProvider(encryptString, encryptionTime);
-        }
+        //    stopwatch.Start();
+        //    string encryptString = Convert.ToBase64String(AES.Encrypt(plainText, Password));
+        //    stopwatch.Stop();
+        //    double encryptionTime = stopwatch.Elapsed.TotalSeconds;
+        //    return new DataEncryptionProvider(encryptString, encryptionTime);
+        //}
 
-        private DataEncryptionProvider Decrypt(string plaintext, string Password)
-        {
-            Stopwatch stopwatch = new Stopwatch();
+        //private DataEncryptionProvider Decrypt(string plaintext, string Password)
+        //{
+        //    Stopwatch stopwatch = new Stopwatch();
 
-            stopwatch.Start();
-            string decryptString = AES.Decrypt(Convert.FromBase64String(plaintext), Password);
-            stopwatch.Stop();
-            double decryptionTime = stopwatch.Elapsed.TotalSeconds;
-            return new DataEncryptionProvider(decryptString, decryptionTime);
-        }
+        //    stopwatch.Start();
+        //    string decryptString = AES.Decrypt(Convert.FromBase64String(plaintext), Password);
+        //    stopwatch.Stop();
+        //    double decryptionTime = stopwatch.Elapsed.TotalSeconds;
+        //    return new DataEncryptionProvider(decryptString, decryptionTime);
+        //}
 
         private void textBoxEncryptPassword_Leave(object sender, EventArgs e)
         {

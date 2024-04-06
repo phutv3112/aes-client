@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,93 +11,144 @@ namespace AESEncryptionSlave.Model
     {
         private const int BlockSize = 16;
 
-        public static byte[] Encrypt(string plainText, string key)
+
+        public static void Encrypt(string inputFilePath, string key)
         {
-            byte[] plainBytes = Encoding.UTF8.GetBytes(plainText);
             byte[] keyBytes = Encoding.UTF8.GetBytes(key);
 
-            byte[][] state = new byte[4][];
-            for (int i = 0; i < 4; i++)
+            byte[] plainBytes = File.ReadAllBytes(inputFilePath);
+
+            int numBlocks = (int)Math.Ceiling((double)plainBytes.Length / BlockSize);
+
+            // Tạo tên file đích
+            string outputFilePath = Path.GetFileNameWithoutExtension("_encrypted" + Path.GetExtension(inputFilePath));
+
+            using (FileStream outputFileStream = new FileStream(outputFilePath, FileMode.Create))
             {
-                state[i] = new byte[4];
-            }
-
-            for (int i = 0; i < Math.Min(plainBytes.Length, BlockSize); i++)
-            {
-                state[i % 4][i / 4] = plainBytes[i];
-            }
-
-            byte[][] w = KeyExpansion(keyBytes);
-
-            AddRoundKey(state, w, 0);
-
-            for (int round = 1; round < 10; round++)
-            {
-                SubBytes(state);
-                ShiftRows(state);
-                MixColumns(state);
-                AddRoundKey(state, w, round);
-            }
-
-            SubBytes(state);
-            ShiftRows(state);
-            AddRoundKey(state, w, 10);
-
-            byte[] cipherBytes = new byte[BlockSize];
-            for (int i = 0; i < 4; i++)
-            {
-                for (int j = 0; j < 4; j++)
+                for (int blockIndex = 0; blockIndex < numBlocks; blockIndex++)
                 {
-                    cipherBytes[i * 4 + j] = state[j][i];
+                    byte[][] state = new byte[4][];
+                    for (int i = 0; i < 4; i++)
+                    {
+                        state[i] = new byte[4];
+                    }
+
+                    for (int i = 0; i < BlockSize; i++)
+                    {
+                        if (blockIndex * BlockSize + i < plainBytes.Length)
+                        {
+                            state[i % 4][i / 4] = plainBytes[blockIndex * BlockSize + i];
+                        }
+                        else
+                        {
+                            // Padding: nếu độ dài dữ liệu không chia hết cho BlockSize, thêm byte 0
+                            state[i % 4][i / 4] = 0;
+                        }
+                    }
+
+                    byte[][] w = KeyExpansion(keyBytes);
+
+                    AddRoundKey(state, w, 0);
+
+                    for (int round = 1; round < 10; round++)
+                    {
+                        SubBytes(state);
+                        ShiftRows(state);
+                        MixColumns(state);
+                        AddRoundKey(state, w, round);
+                    }
+
+                    SubBytes(state);
+                    ShiftRows(state);
+                    AddRoundKey(state, w, 10);
+
+                    for (int i = 0; i < 4; i++)
+                    {
+                        for (int j = 0; j < 4; j++)
+                        {
+                            outputFileStream.WriteByte(state[j][i]);
+                        }
+                    }
                 }
             }
 
-            return cipherBytes;
+            Console.WriteLine("File đã được mã hóa và lưu vào: " + outputFilePath);
         }
 
-        public static string Decrypt(byte[] cipherText, string key)
+
+
+        public static void Decrypt(string inputFilePath, string key)
         {
             byte[] keyBytes = Encoding.UTF8.GetBytes(key);
 
-            byte[][] state = new byte[4][];
-            for (int i = 0; i < 4; i++)
+            byte[] cipherBytes = File.ReadAllBytes(inputFilePath);
+
+            int numBlocks = cipherBytes.Length / BlockSize;
+
+            byte[] decryptedBytes = new byte[numBlocks * BlockSize];
+
+            for (int blockIndex = 0; blockIndex < numBlocks; blockIndex++)
             {
-                state[i] = new byte[4];
-            }
+                byte[][] state = new byte[4][];
+                for (int i = 0; i < 4; i++)
+                {
+                    state[i] = new byte[4];
+                }
 
-            for (int i = 0; i < Math.Min(cipherText.Length, BlockSize); i++)
-            {
-                state[i % 4][i / 4] = cipherText[i];
-            }
+                for (int i = 0; i < BlockSize; i++)
+                {
+                    state[i % 4][i / 4] = cipherBytes[blockIndex * BlockSize + i];
+                }
 
-            byte[][] w = KeyExpansion(keyBytes);
+                byte[][] w = KeyExpansion(keyBytes);
 
-            AddRoundKey(state, w, 10);
+                AddRoundKey(state, w, 10);
 
-            for (int round = 9; round > 0; round--)
-            {
+                for (int round = 9; round > 0; round--)
+                {
+                    InvShiftRows(state);
+                    InvSubBytes(state);
+                    AddRoundKey(state, w, round);
+                    InvMixColumns(state);
+                }
+
                 InvShiftRows(state);
                 InvSubBytes(state);
-                AddRoundKey(state, w, round);
-                InvMixColumns(state);
-            }
+                AddRoundKey(state, w, 0);
 
-            InvShiftRows(state);
-            InvSubBytes(state);
-            AddRoundKey(state, w, 0);
-
-            byte[] plainBytes = new byte[BlockSize];
-            for (int i = 0; i < 4; i++)
-            {
-                for (int j = 0; j < 4; j++)
+                for (int i = 0; i < 4; i++)
                 {
-                    plainBytes[i * 4 + j] = state[j][i];
+                    for (int j = 0; j < 4; j++)
+                    {
+                        decryptedBytes[blockIndex * BlockSize + i * 4 + j] = state[j][i];
+                    }
                 }
             }
 
-            return Encoding.UTF8.GetString(plainBytes);
-        }
+            // Xóa các byte 0 được thêm vào cuối block nếu có
+            int paddingLength = decryptedBytes.Length;
+            for (int i = decryptedBytes.Length - 1; i >= 0; i--)
+            {
+                if (decryptedBytes[i] == 0)
+                {
+                    paddingLength--;
+                }
+                else
+                {
+                    break;
+                }
+            }
 
+            Array.Resize(ref decryptedBytes, paddingLength);
+
+            // Tạo tên file đích
+            string outputFilePath = Path.GetFileNameWithoutExtension("_decrypted" + Path.GetExtension(inputFilePath);
+
+            // Ghi dữ liệu đã giải mã ra file mới
+            File.WriteAllBytes(outputFilePath, decryptedBytes);
+
+            Console.WriteLine("File đã được giải mã và lưu vào: " + outputFilePath);
+        }
         private static void SubBytes(byte[][] state)
         {
             for (int i = 0; i < 4; i++)
