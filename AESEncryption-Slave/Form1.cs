@@ -14,6 +14,7 @@ using AESEncryptionSlave.Model;
 using System.Diagnostics;
 using System.Net.Sockets;
 using System.Net;
+using System.Reflection.Metadata;
 
 namespace AESEncryptionSlave
 {
@@ -221,11 +222,8 @@ namespace AESEncryptionSlave
             {
                 try
                 {
-                    using (StreamReader sr = new StreamReader(openFile.FileName))
-                    {
-                        string content = sr.ReadToEnd();
-                        textBoxInput.Text = content;
-                    }
+                    textBoxInput.Text = openFile.FileName;
+                    
                 }
                 catch (Exception ex)
                 {
@@ -259,11 +257,8 @@ namespace AESEncryptionSlave
             {
                 try
                 {
-                    using (StreamReader sr = new StreamReader(openFile.FileName))
-                    {
-                        string content = sr.ReadToEnd();
-                        textBoxEncrypted.Text = content;
-                    }
+                    textBoxEncrypted.Text = openFile.FileName;
+                   
                 }
                 catch (Exception ex)
                 {

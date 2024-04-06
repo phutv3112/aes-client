@@ -35,9 +35,11 @@ namespace AESEncryptionSlave
             label2 = new System.Windows.Forms.Label();
             textBoxEncryptPassword = new System.Windows.Forms.TextBox();
             groupBox1 = new System.Windows.Forms.GroupBox();
+            textTimeEncrypt = new System.Windows.Forms.TextBox();
             button2 = new System.Windows.Forms.Button();
             button1 = new System.Windows.Forms.Button();
             groupBox2 = new System.Windows.Forms.GroupBox();
+            textTimeDecrypt = new System.Windows.Forms.TextBox();
             button4 = new System.Windows.Forms.Button();
             button3 = new System.Windows.Forms.Button();
             label3 = new System.Windows.Forms.Label();
@@ -54,8 +56,6 @@ namespace AESEncryptionSlave
             textBoxDebug = new System.Windows.Forms.TextBox();
             openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             button5 = new System.Windows.Forms.Button();
-            textTimeEncrypt = new System.Windows.Forms.TextBox();
-            textTimeDecrypt = new System.Windows.Forms.TextBox();
             groupBox1.SuspendLayout();
             groupBox2.SuspendLayout();
             groupBox3.SuspendLayout();
@@ -64,7 +64,7 @@ namespace AESEncryptionSlave
             // textBoxInput
             // 
             textBoxInput.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            textBoxInput.Location = new System.Drawing.Point(8, 48);
+            textBoxInput.Location = new System.Drawing.Point(8, 46);
             textBoxInput.Name = "textBoxInput";
             textBoxInput.Size = new System.Drawing.Size(523, 27);
             textBoxInput.TabIndex = 0;
@@ -75,7 +75,7 @@ namespace AESEncryptionSlave
             // 
             label1.AutoSize = true;
             label1.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            label1.Location = new System.Drawing.Point(8, 25);
+            label1.Location = new System.Drawing.Point(8, 24);
             label1.Name = "label1";
             label1.Size = new System.Drawing.Size(147, 20);
             label1.TabIndex = 1;
@@ -84,9 +84,9 @@ namespace AESEncryptionSlave
             // buttonExit
             // 
             buttonExit.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            buttonExit.Location = new System.Drawing.Point(694, 531);
+            buttonExit.Location = new System.Drawing.Point(694, 504);
             buttonExit.Name = "buttonExit";
-            buttonExit.Size = new System.Drawing.Size(94, 29);
+            buttonExit.Size = new System.Drawing.Size(94, 28);
             buttonExit.TabIndex = 2;
             buttonExit.Text = "Exit";
             buttonExit.UseVisualStyleBackColor = true;
@@ -96,7 +96,7 @@ namespace AESEncryptionSlave
             // 
             label2.AutoSize = true;
             label2.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            label2.Location = new System.Drawing.Point(8, 92);
+            label2.Location = new System.Drawing.Point(8, 87);
             label2.Name = "label2";
             label2.Size = new System.Drawing.Size(335, 20);
             label2.TabIndex = 4;
@@ -105,7 +105,7 @@ namespace AESEncryptionSlave
             // textBoxEncryptPassword
             // 
             textBoxEncryptPassword.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            textBoxEncryptPassword.Location = new System.Drawing.Point(8, 115);
+            textBoxEncryptPassword.Location = new System.Drawing.Point(8, 109);
             textBoxEncryptPassword.MaxLength = 16;
             textBoxEncryptPassword.Name = "textBoxEncryptPassword";
             textBoxEncryptPassword.Size = new System.Drawing.Size(390, 27);
@@ -124,19 +124,28 @@ namespace AESEncryptionSlave
             groupBox1.Controls.Add(label1);
             groupBox1.Controls.Add(textBoxInput);
             groupBox1.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            groupBox1.Location = new System.Drawing.Point(13, 28);
+            groupBox1.Location = new System.Drawing.Point(13, 27);
             groupBox1.Name = "groupBox1";
-            groupBox1.Size = new System.Drawing.Size(775, 219);
+            groupBox1.Size = new System.Drawing.Size(775, 208);
             groupBox1.TabIndex = 5;
             groupBox1.TabStop = false;
             groupBox1.Text = "Encryption";
             // 
+            // textTimeEncrypt
+            // 
+            textTimeEncrypt.Location = new System.Drawing.Point(568, 170);
+            textTimeEncrypt.Name = "textTimeEncrypt";
+            textTimeEncrypt.ReadOnly = true;
+            textTimeEncrypt.Size = new System.Drawing.Size(189, 27);
+            textTimeEncrypt.TabIndex = 7;
+            textTimeEncrypt.TextChanged += textBox1_TextChanged;
+            // 
             // button2
             // 
-            button2.Location = new System.Drawing.Point(568, 111);
+            button2.Location = new System.Drawing.Point(568, 105);
             button2.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             button2.Name = "button2";
-            button2.Size = new System.Drawing.Size(115, 31);
+            button2.Size = new System.Drawing.Size(115, 29);
             button2.TabIndex = 6;
             button2.Text = "Generate Key";
             button2.UseVisualStyleBackColor = true;
@@ -144,10 +153,10 @@ namespace AESEncryptionSlave
             // 
             // button1
             // 
-            button1.Location = new System.Drawing.Point(568, 48);
+            button1.Location = new System.Drawing.Point(568, 46);
             button1.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             button1.Name = "button1";
-            button1.Size = new System.Drawing.Size(115, 31);
+            button1.Size = new System.Drawing.Size(115, 29);
             button1.TabIndex = 5;
             button1.Text = "Plaintext";
             button1.UseVisualStyleBackColor = true;
@@ -163,19 +172,27 @@ namespace AESEncryptionSlave
             groupBox2.Controls.Add(label4);
             groupBox2.Controls.Add(textBoxEncrypted);
             groupBox2.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            groupBox2.Location = new System.Drawing.Point(13, 267);
+            groupBox2.Location = new System.Drawing.Point(13, 254);
             groupBox2.Name = "groupBox2";
-            groupBox2.Size = new System.Drawing.Size(775, 229);
+            groupBox2.Size = new System.Drawing.Size(775, 218);
             groupBox2.TabIndex = 6;
             groupBox2.TabStop = false;
             groupBox2.Text = "Decryption";
             // 
+            // textTimeDecrypt
+            // 
+            textTimeDecrypt.Location = new System.Drawing.Point(568, 175);
+            textTimeDecrypt.Name = "textTimeDecrypt";
+            textTimeDecrypt.ReadOnly = true;
+            textTimeDecrypt.Size = new System.Drawing.Size(189, 27);
+            textTimeDecrypt.TabIndex = 8;
+            // 
             // button4
             // 
-            button4.Location = new System.Drawing.Point(568, 116);
+            button4.Location = new System.Drawing.Point(568, 110);
             button4.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             button4.Name = "button4";
-            button4.Size = new System.Drawing.Size(115, 31);
+            button4.Size = new System.Drawing.Size(115, 29);
             button4.TabIndex = 8;
             button4.Text = "Key File";
             button4.UseVisualStyleBackColor = true;
@@ -183,12 +200,12 @@ namespace AESEncryptionSlave
             // 
             // button3
             // 
-            button3.Location = new System.Drawing.Point(568, 48);
+            button3.Location = new System.Drawing.Point(568, 46);
             button3.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             button3.Name = "button3";
-            button3.Size = new System.Drawing.Size(115, 31);
+            button3.Size = new System.Drawing.Size(115, 29);
             button3.TabIndex = 7;
-            button3.Text = "Encrypt file";
+            button3.Text = "Decrypt file";
             button3.UseVisualStyleBackColor = true;
             button3.Click += button3_Click;
             // 
@@ -196,7 +213,7 @@ namespace AESEncryptionSlave
             // 
             label3.AutoSize = true;
             label3.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            label3.Location = new System.Drawing.Point(8, 93);
+            label3.Location = new System.Drawing.Point(8, 88);
             label3.Name = "label3";
             label3.Size = new System.Drawing.Size(336, 20);
             label3.TabIndex = 4;
@@ -205,7 +222,7 @@ namespace AESEncryptionSlave
             // textBoxDcryptPassword
             // 
             textBoxDcryptPassword.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            textBoxDcryptPassword.Location = new System.Drawing.Point(8, 117);
+            textBoxDcryptPassword.Location = new System.Drawing.Point(8, 111);
             textBoxDcryptPassword.MaxLength = 16;
             textBoxDcryptPassword.Name = "textBoxDcryptPassword";
             textBoxDcryptPassword.Size = new System.Drawing.Size(390, 27);
@@ -217,7 +234,7 @@ namespace AESEncryptionSlave
             // 
             label4.AutoSize = true;
             label4.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            label4.Location = new System.Drawing.Point(8, 25);
+            label4.Location = new System.Drawing.Point(8, 24);
             label4.Name = "label4";
             label4.Size = new System.Drawing.Size(244, 20);
             label4.TabIndex = 1;
@@ -226,7 +243,7 @@ namespace AESEncryptionSlave
             // textBoxEncrypted
             // 
             textBoxEncrypted.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            textBoxEncrypted.Location = new System.Drawing.Point(8, 48);
+            textBoxEncrypted.Location = new System.Drawing.Point(8, 46);
             textBoxEncrypted.Name = "textBoxEncrypted";
             textBoxEncrypted.Size = new System.Drawing.Size(523, 27);
             textBoxEncrypted.TabIndex = 0;
@@ -237,9 +254,9 @@ namespace AESEncryptionSlave
             // 
             buttonDecrypt.Enabled = false;
             buttonDecrypt.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            buttonDecrypt.Location = new System.Drawing.Point(567, 531);
+            buttonDecrypt.Location = new System.Drawing.Point(567, 504);
             buttonDecrypt.Name = "buttonDecrypt";
-            buttonDecrypt.Size = new System.Drawing.Size(94, 29);
+            buttonDecrypt.Size = new System.Drawing.Size(94, 28);
             buttonDecrypt.TabIndex = 7;
             buttonDecrypt.Text = "Decrypt";
             buttonDecrypt.UseVisualStyleBackColor = true;
@@ -249,9 +266,9 @@ namespace AESEncryptionSlave
             // 
             buttonEncrypt.Enabled = false;
             buttonEncrypt.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            buttonEncrypt.Location = new System.Drawing.Point(440, 531);
+            buttonEncrypt.Location = new System.Drawing.Point(440, 504);
             buttonEncrypt.Name = "buttonEncrypt";
-            buttonEncrypt.Size = new System.Drawing.Size(94, 29);
+            buttonEncrypt.Size = new System.Drawing.Size(94, 28);
             buttonEncrypt.TabIndex = 8;
             buttonEncrypt.Text = "Encrypt";
             buttonEncrypt.UseVisualStyleBackColor = true;
@@ -261,7 +278,7 @@ namespace AESEncryptionSlave
             // 
             label5.AutoSize = true;
             label5.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            label5.Location = new System.Drawing.Point(23, 184);
+            label5.Location = new System.Drawing.Point(23, 175);
             label5.Name = "label5";
             label5.Size = new System.Drawing.Size(206, 20);
             label5.TabIndex = 10;
@@ -269,10 +286,10 @@ namespace AESEncryptionSlave
             // 
             // textBoxEncryptedOutput
             // 
-            textBoxEncryptedOutput.Location = new System.Drawing.Point(23, 207);
+            textBoxEncryptedOutput.Location = new System.Drawing.Point(23, 197);
             textBoxEncryptedOutput.Name = "textBoxEncryptedOutput";
             textBoxEncryptedOutput.ReadOnly = true;
-            textBoxEncryptedOutput.Size = new System.Drawing.Size(521, 27);
+            textBoxEncryptedOutput.Size = new System.Drawing.Size(521, 26);
             textBoxEncryptedOutput.TabIndex = 9;
             textBoxEncryptedOutput.TextChanged += textBoxEncryptedOutput_TextChanged;
             textBoxEncryptedOutput.MouseDoubleClick += textBoxEncryptedOutput_MouseDoubleClick;
@@ -281,7 +298,7 @@ namespace AESEncryptionSlave
             // 
             label6.AutoSize = true;
             label6.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            label6.Location = new System.Drawing.Point(22, 428);
+            label6.Location = new System.Drawing.Point(22, 407);
             label6.Name = "label6";
             label6.Size = new System.Drawing.Size(107, 20);
             label6.TabIndex = 12;
@@ -289,28 +306,28 @@ namespace AESEncryptionSlave
             // 
             // textBoxDecryptOutput
             // 
-            textBoxDecryptOutput.Location = new System.Drawing.Point(22, 451);
+            textBoxDecryptOutput.Location = new System.Drawing.Point(22, 428);
             textBoxDecryptOutput.Name = "textBoxDecryptOutput";
             textBoxDecryptOutput.ReadOnly = true;
-            textBoxDecryptOutput.Size = new System.Drawing.Size(522, 27);
+            textBoxDecryptOutput.Size = new System.Drawing.Size(522, 26);
             textBoxDecryptOutput.TabIndex = 11;
             // 
             // groupBox3
             // 
             groupBox3.Controls.Add(textBoxDebug);
-            groupBox3.Location = new System.Drawing.Point(13, 600);
+            groupBox3.Location = new System.Drawing.Point(13, 570);
             groupBox3.Name = "groupBox3";
-            groupBox3.Size = new System.Drawing.Size(775, 77);
+            groupBox3.Size = new System.Drawing.Size(775, 73);
             groupBox3.TabIndex = 13;
             groupBox3.TabStop = false;
             groupBox3.Text = "Double click inside any field above to see its value in bytes";
             // 
             // textBoxDebug
             // 
-            textBoxDebug.Location = new System.Drawing.Point(10, 35);
+            textBoxDebug.Location = new System.Drawing.Point(10, 33);
             textBoxDebug.Name = "textBoxDebug";
             textBoxDebug.ReadOnly = true;
-            textBoxDebug.Size = new System.Drawing.Size(747, 27);
+            textBoxDebug.Size = new System.Drawing.Size(747, 26);
             textBoxDebug.TabIndex = 0;
             // 
             // openFileDialog1
@@ -320,36 +337,19 @@ namespace AESEncryptionSlave
             // button5
             // 
             button5.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            button5.Location = new System.Drawing.Point(318, 531);
+            button5.Location = new System.Drawing.Point(318, 504);
             button5.Name = "button5";
-            button5.Size = new System.Drawing.Size(94, 29);
+            button5.Size = new System.Drawing.Size(94, 28);
             button5.TabIndex = 14;
             button5.Text = "Clear";
             button5.UseVisualStyleBackColor = true;
             button5.Click += button5_Click;
             // 
-            // textTimeEncrypt
-            // 
-            textTimeEncrypt.Location = new System.Drawing.Point(568, 179);
-            textTimeEncrypt.Name = "textTimeEncrypt";
-            textTimeEncrypt.ReadOnly = true;
-            textTimeEncrypt.Size = new System.Drawing.Size(189, 27);
-            textTimeEncrypt.TabIndex = 7;
-            textTimeEncrypt.TextChanged += textBox1_TextChanged;
-            // 
-            // textTimeDecrypt
-            // 
-            textTimeDecrypt.Location = new System.Drawing.Point(568, 184);
-            textTimeDecrypt.Name = "textTimeDecrypt";
-            textTimeDecrypt.ReadOnly = true;
-            textTimeDecrypt.Size = new System.Drawing.Size(189, 27);
-            textTimeDecrypt.TabIndex = 8;
-            // 
             // Form1
             // 
-            AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
+            AutoScaleDimensions = new System.Drawing.SizeF(8F, 19F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            ClientSize = new System.Drawing.Size(800, 691);
+            ClientSize = new System.Drawing.Size(800, 656);
             Controls.Add(button5);
             Controls.Add(groupBox3);
             Controls.Add(label6);
