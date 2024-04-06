@@ -142,7 +142,7 @@ namespace AESEncryptionSlave.Model
             Array.Resize(ref decryptedBytes, paddingLength);
 
             // Tạo tên file đích
-            string outputFilePath = Path.GetFileNameWithoutExtension("_decrypted" + Path.GetExtension(inputFilePath);
+            string outputFilePath = Path.GetFileNameWithoutExtension("_decrypted" + Path.GetExtension(inputFilePath));
 
             // Ghi dữ liệu đã giải mã ra file mới
             File.WriteAllBytes(outputFilePath, decryptedBytes);
